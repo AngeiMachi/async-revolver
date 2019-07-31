@@ -2,10 +2,24 @@
   "name": "async-revolver",
   "version": "1.0.0",
   "description": "A lightweight , dependency free and promise based library to manage the use of resources asynchronously with minimum interval time.",
-  "main": "async-revolver.js",
+  "main": "lib/async-revolver.js",
+  "types": "lib/async-revolver.d.ts",
   "scripts": {
-    
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json" ,
+    "prepare" : "npm run build",
+    "version" : "npm run format && git add -A src",
+    "postversion" : "git push && git push --tags"
   },
   "author": "AngeiMachi",
-  "license": "ISC"
+  "keywords": ["revolver", "data","type","resource management"],
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "^1.18.2",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.5.3"
+  },
+  "files": ["lib/**/*"]
 }
