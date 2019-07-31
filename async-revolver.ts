@@ -9,9 +9,9 @@ export class AsyncRevolver {
     private _bulletsTimer:number[]=[];
     private _index: number = 0;
 
-    constructor(bullets:any[] | {}, intervalTime:number=0, includeFirstRound = false, groupInterval:boolean = true) {
+    constructor(bullets:any[] | {[key:string]:any}, intervalTime:number=0, includeFirstRound = false, groupInterval:boolean = true) {
      
-        const tmpBullets = (bullets instanceof Object && !(bullets instanceof Array))?  Object.values(bullets) : bullets;
+        const tmpBullets = (bullets instanceof Object && !(bullets instanceof Array))?   Object.keys(bullets).map(key => bullets[key]) : bullets;
        
         if (tmpBullets.length === 0 || intervalTime<0){ throw "Invalid init"; };
 
