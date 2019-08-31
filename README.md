@@ -30,7 +30,7 @@ npm install async-revolver
 
 - Case 2 ( includeFirstRound = true , groupInterval = true)
     
-        let revolver = new AsyncRevolver([1,2,3],1000, false , true)
+        let revolver = new AsyncRevolver([1,2,3],1000, true , true)
 
         let v1 = await revolver.next(); (1 seconds) //..1
         let v2 = await revolver.next(); (1 seconds) //..2
@@ -44,7 +44,7 @@ npm install async-revolver
     
 - Case 3 ( includeFirstRound = false , groupInterval = false)
     
-        let revolver = new AsyncRevolver([1,2,3],1000, false , true)
+        let revolver = new AsyncRevolver([1,2,3],1000, false , false)
 
         let v1 = await revolver.next(); (0 seconds) //..1
         let v2 = await revolver.next(); (1 seconds) //..2
@@ -58,7 +58,7 @@ npm install async-revolver
 
 - Case 4 ( includeFirstRound = true , groupInterval = false)
     
-        let revolver = new AsyncRevolver([1,2,3],1000, false , true)
+        let revolver = new AsyncRevolver([1,2,3],1000, true , false)
 
         let v1 = await revolver.next(); (1 seconds) //..1
         let v2 = await revolver.next(); (2 seconds) //..2
