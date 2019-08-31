@@ -1,7 +1,7 @@
 # async-revolver
-A lightweight , dependency free and promise based library to manage the use of resources asynchronously by minimum interval time throttling.
+A lightweight , dependency free and promise based library to manage the use of resources asynchronously by minimum interval time throttling and in cycladic manner.
 
-can work well with a group of api keys limited calls a minute for example where the keys are taken as bullets.
+For example, this library can work well with a group of API keys that are limited in calls to the API per minute - the API keys can be taken as bullets and the recourse will only be released once it reached a minimum interval.
 
 ## Installation:
 
