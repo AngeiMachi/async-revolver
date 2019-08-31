@@ -1,7 +1,7 @@
 export class AsyncRevolver {
   private _bullets: any[];
   private _intervalTime: number;
-  private _groupInterval: boolean;
+  private _fullRoundInterval: boolean;
   private _includeFirstRound: boolean;
 
   private _didMakeFirstRound: boolean = false;
@@ -9,87 +9,89 @@ export class AsyncRevolver {
   private _index: number = 0;
 
   constructor(
-    bullets: any[] | { [key: string]: any },
-    intervalTime: number = 0,
-    includeFirstRound = false,
-    groupInterval: boolean = true,
+      bullets: any[] | { [key: string]: any },
+      intervalTime: number = 0,
+      includeFirstRound = false,
+      fullRoundInterval: boolean = true,
   ) {
-    const tmpBullets =
-      bullets instanceof Object && !(bullets instanceof Array)
-        ? Object.keys(bullets).map(key => bullets[key])
-        : bullets;
+      const tmpBullets =
+          bullets instanceof Object && !(bullets instanceof Array)
+              ? Object.keys(bullets).map(key => bullets[key])
+              : bullets;
 
-    if (tmpBullets.length === 0 || intervalTime < 0) {
-      throw 'Invalid init';
-    }
+      if (tmpBullets.length === 0 || intervalTime < 0) {
+          throw 'Invalid init';
+      }
 
-    this._bullets = tmpBullets;
-    this._intervalTime = intervalTime;
-    this._groupInterval = groupInterval;
-    this._includeFirstRound = includeFirstRound;
+      this._bullets = tmpBullets;
+      this._intervalTime = intervalTime;
+      this._fullRoundInterval = fullRoundInterval;
+      this._includeFirstRound = includeFirstRound;
 
-    const initialInterval = this._includeFirstRound ? 0 : this._intervalTime;
-    this._bullets.forEach((asset, index) => {
-      this._bulletsTimer.push(new Date().getTime() - initialInterval);
-    });
+      const initialInterval = this._includeFirstRound ? 0 : this._intervalTime;
+
+      this._bullets.forEach((asset, index) => {
+          if (this._fullRoundInterval ) {
+              this._bulletsTimer.push(new Date().getTime() + initialInterval);
+          } else {
+              this._bulletsTimer.push(new Date().getTime() + (initialInterval * (index + 1)));
+          }
+      });
+
+
   }
 
-  public next(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      const nextBullet = this.getCurrentBullet();
-      setTimeout(() => {
-        this.resetComingBulletTime().promoteIndex();
-        resolve(nextBullet);
-      }, this.getComingBulletAwaitTime());
-    });
+  public next(log?: string): Promise<any> {
+      return new Promise((resolve, reject) => {
+          const nextBullet = this.getComingBullet();
+          this.promoteIndex();
+          setTimeout(() => {
+              resolve(nextBullet);
+          }, this.getComingBulletAwaitTime());
+      });
   }
 
   private promoteIndex() {
-    if (this._index + 1 < this._bullets.length) {
-      this._index++;
-    } else {
-      if (!this._didMakeFirstRound) {
-        this._didMakeFirstRound = true;
+      if (this._index + 1 < this._bullets.length) {
+          this._index++;
+      } else {
+          if (!this._didMakeFirstRound) {
+              this._didMakeFirstRound = true;
+          }
+          this._index = 0;
       }
-      this._index = 0;
-    }
-    return this;
+      return this;
   }
 
   private getComingBulletAwaitTime(): number {
-    const now = new Date().getTime();
-    let then;
+      const now = new Date().getTime();
+      let coming;
 
-    if (!this._groupInterval && (this._includeFirstRound || this._didMakeFirstRound)) {
-      then = this.getPreviousBulletTimer();
-    } else {
-      then = this._bulletsTimer[this._index];
-    }
+      coming = this._bulletsTimer.shift() as number;
 
-    const nextBulletTime = now - then;
+      const comingBulletTime = coming - now;
 
-    if (nextBulletTime >= this._intervalTime) {
-      return 0;
-    }
+      if (comingBulletTime <= 0) {
+          if (this._fullRoundInterval) {
+              this._bulletsTimer.push(now + this._intervalTime);
+          } else {
+              const lastIntervalTime = this._bulletsTimer[this._bulletsTimer.length - 1];
+              this._bulletsTimer.push(lastIntervalTime + this._intervalTime);
+          }
+          return 0;
+      }
 
-    return this._intervalTime - nextBulletTime;
+      if (this._fullRoundInterval) {
+          this._bulletsTimer.push(now + this._intervalTime + comingBulletTime);
+      } else {
+          const lastIntervalTime = this._bulletsTimer[this._bulletsTimer.length - 1];
+          this._bulletsTimer.push(lastIntervalTime + this._intervalTime);
+      }
+      return comingBulletTime;
   }
 
-  private resetComingBulletTime() {
-    this._bulletsTimer[this._index] = new Date().getTime();
-
-    return this;
-  }
-
-  private getCurrentBullet() {
-    return this._bullets[this._index];
-  }
-
-  private getPreviousBulletTimer() {
-    if (this._index > 0) {
-      return this._bulletsTimer[this._index - 1];
-    } else {
-      return this._bulletsTimer[this._bulletsTimer.length - 1];
-    }
+  private getComingBullet() {
+      return this._bullets[this._index];
   }
 }
+
