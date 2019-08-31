@@ -12,8 +12,9 @@ npm install async-revolver
     intervalTime - the interval between each bullet or between a full round 
     includeFirstRound - skip throttling the first round or not
     fullRoundInterval - throttling between full round or each bullet
-## Usage :
-    ### Case 1 ( includeFirstRound = false , groupInterval = true)
+## Example :
+
+- Case 1 ( includeFirstRound = false , groupInterval = true)
     
         let revolver = new AsyncRevolver([1,2,3],1000, false , true)
 
@@ -27,7 +28,7 @@ npm install async-revolver
         let v8 = await revolver.next(); (2 seconds) //..2
         let v9 = await revolver.next(); (2 seconds) //..3
 
-    ### Case 2 ( includeFirstRound = true , groupInterval = true)
+- Case 2 ( includeFirstRound = true , groupInterval = true)
     
         let revolver = new AsyncRevolver([1,2,3],1000, false , true)
 
@@ -41,7 +42,7 @@ npm install async-revolver
         let v8 = await revolver.next(); (3 seconds) //..2
         let v9 = await revolver.next(); (3 seconds) //..3
     
-     ### Case 3 ( includeFirstRound = false , groupInterval = false)
+- Case 3 ( includeFirstRound = false , groupInterval = false)
     
         let revolver = new AsyncRevolver([1,2,3],1000, false , true)
 
@@ -55,7 +56,7 @@ npm install async-revolver
         let v8 = await revolver.next(); (7 seconds) //..2
         let v9 = await revolver.next(); (8 seconds) //..3
 
-    ### Case 4 ( includeFirstRound = true , groupInterval = false)
+- Case 4 ( includeFirstRound = true , groupInterval = false)
     
         let revolver = new AsyncRevolver([1,2,3],1000, false , true)
 
